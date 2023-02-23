@@ -2,8 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalComponent } from './modal/modal.component';
 
-
-
 @NgModule({
   declarations: [
     ModalComponent
@@ -11,6 +9,6 @@ import { ModalComponent } from './modal/modal.component';
   imports: [
     CommonModule
   ],
-  exports: [ModalComponent]
+  exports: [ModalComponent],
 })
 export class SharedModule { }
