@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ModalService } from 'src/app/services/modal.service';
 
 @Component({
   selector: 'app-modal',
@@ -7,4 +8,7 @@ import { Component } from '@angular/core';
 })
 export class ModalComponent {
 
+  constructor(public modal: ModalService) {
+    console.log(this.modal.visible)
+  }
 }
