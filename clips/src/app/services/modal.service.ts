@@ -9,13 +9,16 @@ interface IModal {
   providedIn: "root"
 })
 export class ModalService {
-  private modals: IModal[] = [];
+  protected modals: IModal[] = [];
 
   constructor() { }
 
-
   register(id: string) {
     this.modals.push({ id, visible: false })
+  }
+
+  unregister(id: string) {
+    this.modals = this.modals.filter(item => item.id !== id);
   }
 
 
@@ -28,6 +31,6 @@ export class ModalService {
     const modal = this.modals.find(item => id === item.id);
     if (!modal) return;
     modal.visible = !modal.visible;
-    // this.visible = !this.visible
+    return false;
   }
 }
