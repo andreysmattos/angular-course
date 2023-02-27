@@ -1,20 +1,29 @@
-<form>
+<form #loginForm="ngForm" (ngSubmit)="login()">
     <!-- Email -->
     <div class="mb-3">
         <label class="inline-block mb-2">Email</label>
-        <input name="email" [(ngModel)]="credentials.email" type="email" class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition
+        <input #email="ngModel" required
+            pattern="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
+            name="name" [(ngModel)]="credentials.email" type="email" class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition
 duration-500 focus:outline-none rounded bg-transparent
 focus:border-indigo-400" placeholder="Enter Email" />
-<!-- <input [value]="" (change)=""> -->
-
+        <!-- <input [value]="" (change)=""> -->
+        <p *ngIf="email.dirty && email.errors && email.touched" class="text-red-400">
+            E-mail is invalid
+        </p>
     </div>
     <!-- Password -->
     <div class="mb-3">
         <label class="inline-block mb-2">Password</label>
-        <input type="password" class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition
+        <input #password="ngModel" [(ngModel)]="credentials.password" name="password" required
+            pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$" type="password" class="block w-full py-1.5 px-3 text-gray-200 border border-gray-400 transition
 duration-500 focus:outline-none rounded bg-transparent focus:border-indigo-400" placeholder="Password" />
+        <p *ngIf="password.touched && password.dirty && password.errors" class="text-red-400">
+            Provide a valid password
+        </p>
     </div>
-    <button type="submit" class="block w-full bg-indigo-400 text-white py-1.5 px-3 rounded transition
+    <button [disabled]="loginForm.invalid" type="submit" class="block w-full bg-indigo-400 text-white py-1.5 px-3 rounded transition
+    disabled:bg-gray-500 disabled:cursor-not-allowed
 hover:bg-indigo-500">
         Submit
     </button>
