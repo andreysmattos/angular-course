@@ -1,25 +1,23 @@
-import { Observable } from "rxjs";
+import { of, from } from "rxjs";
+import { map } from "rxjs/operators";
 
-const observable = new Observable((subscriber) => {
-    // apagar todos esses subscriber para proxima aula
-  subscriber.next("Hello world");
+const observable = of(5, 8, 10, 18, 20, 25);
 
-  subscriber.error('Error!')
+const numberWithSymbol = observable.pipe(map((value) => {
+  return "$" + value
+}));
 
-  subscriber.next("test");
-  subscriber.complete();
-  subscriber.next("last next");
+const sub = observable.subscribe({
+  next: console.log,
+  complete: () => console.log("complete"),
 });
 
-observable.subscribe({
-  next: (value) => {
-    console.log("next value: ");
-    console.log(value);
-  },
-  complete: () => {
-    console.log("complete called");
-  },
-  error: (error) => {
-    console.error(error);
-  },
+numberWithSymbol.subscribe({
+  next: console.log,
+  complete: () => console.log("complete"),
 });
+// setTimeout(() => {
+//   sub.unsubscribe();
+// }, 4000);
+
+console.log("finished");
