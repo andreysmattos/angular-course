@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms'
-import { AngularFireAuth } from '@angular/fire/compat/auth';
-
+import IUser from 'src/app/models/user.model';
+import { AuthService } from 'src/app/services/auth.service';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
@@ -9,14 +9,13 @@ import { AngularFireAuth } from '@angular/fire/compat/auth';
 })
 export class RegisterComponent {
 
-  constructor(private auth: AngularFireAuth) {
+  constructor(private _auth: AuthService) {
 
   }
 
-
   name = new FormControl('', [Validators.required, Validators.minLength(3)]);
   email = new FormControl('', [Validators.required, Validators.email]);
-  age = new FormControl('', [Validators.required, Validators.min(18), Validators.max(120)]);
+  age = new FormControl<number | null>(null, [Validators.required, Validators.min(18), Validators.max(120)]);
   password = new FormControl('', [Validators.required, Validators.pattern(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)]);
   confirm_password = new FormControl('', [Validators.required]);
   phone = new FormControl('', [Validators.required, Validators.minLength(12), Validators.maxLength(12)]);
@@ -41,11 +40,14 @@ export class RegisterComponent {
     this.showAlert = true;
     this.inSubmission = true;
 
-    const { email, password } = this.registerForm.value;
+    const userData = this.registerForm.value;
+
+
 
     try {
-      const userCredentials = await this.auth.createUserWithEmailAndPassword(email as string, password as string);
-      console.log({userCredentials})
+
+      await this._auth.createUser(userData as IUser);
+
     } catch (error) {
       console.log(error);
       this.alertMessage = "An unexpected error ocurred. Please try agian later!";
