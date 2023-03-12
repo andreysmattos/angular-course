@@ -1,9 +1,9 @@
 <app-nav />
-<app-auth-modal></app-auth-modal>
+<app-auth-modal *ngIf="!(auth.isAuthWithDelay$ | async)"></app-auth-modal>
 
 <!-- Intro Section -->
 <section class="relative overflow-hidden mb-2">
- 
+
   <video autoplay muted loop class="w-full h-full object-cover absolute z-0">
     <source src="assets/video/hero.webm" type="video/webm">
   </video>

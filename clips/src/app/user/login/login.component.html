@@ -1,4 +1,9 @@
 <form #loginForm="ngForm" (ngSubmit)="login()">
+
+    <app-alert *ngIf="showAlert" [color]="alertColor">
+        {{alertMessage}}
+    </app-alert>
+
     <!-- Email -->
     <div class="mb-3">
         <label class="inline-block mb-2">Email</label>
@@ -22,7 +27,7 @@ duration-500 focus:outline-none rounded bg-transparent focus:border-indigo-400" 
             Provide a valid password
         </p>
     </div>
-    <button [disabled]="loginForm.invalid" type="submit" class="block w-full bg-indigo-400 text-white py-1.5 px-3 rounded transition
+    <button [disabled]="loginForm.invalid || inSubmission" type="submit" class="block w-full bg-indigo-400 text-white py-1.5 px-3 rounded transition
     disabled:bg-gray-500 disabled:cursor-not-allowed
 hover:bg-indigo-500">
         Submit
