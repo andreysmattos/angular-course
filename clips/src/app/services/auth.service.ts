@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
-import { Router } from '@angular/router';
-import { delay, map, Observable, of, pipe } from 'rxjs';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
+import { delay, map, Observable, of, filter } from 'rxjs';
 import IUser from '../models/user.model';
 
 
@@ -19,8 +19,14 @@ export class AuthService {
   constructor(
     private auth: AngularFireAuth,
     private db: AngularFirestore,
-    public router: Router
+    public router: Router,
+    private route: ActivatedRoute
   ) {
+
+    this.router.events
+      .pipe(filter(e => e instanceof NavigationEnd))
+      .subscribe(console.log);
+
     this.usersCollection = db.collection('users');
 
     this.isAuth$ = auth.user.pipe(map(user => !!user));
@@ -28,6 +34,9 @@ export class AuthService {
     this.isAuthWithDelay$ = this.isAuth$.pipe(
       delay(1000)
     );
+
+
+
   }
 
   public async createUser(userData: IUser) {
@@ -55,7 +64,7 @@ export class AuthService {
 
 
   public async logout($event?: Event) {
-    if($event) $event.preventDefault();
+    if ($event) $event.preventDefault();
     await this.auth.signOut();
     await this.router.navigateByUrl('/');
   }
