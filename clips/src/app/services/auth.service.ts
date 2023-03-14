@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireAuth } from '@angular/fire/compat/auth';
 import { AngularFirestore, AngularFirestoreCollection } from '@angular/fire/compat/firestore';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { delay, map, Observable, of, filter } from 'rxjs';
+import { delay, map, Observable, of, filter, switchMap } from 'rxjs';
 import IUser from '../models/user.model';
 
 
@@ -15,17 +15,25 @@ export class AuthService {
   private usersCollection: AngularFirestoreCollection<IUser>;
   public isAuth$: Observable<boolean> = of(false);
   public isAuthWithDelay$: Observable<boolean> = of(false);
+  public redirect = false;
 
   constructor(
     private auth: AngularFireAuth,
     private db: AngularFirestore,
     public router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {
 
     this.router.events
-      .pipe(filter(e => e instanceof NavigationEnd))
-      .subscribe(console.log);
+      .pipe(
+        filter(e => e instanceof NavigationEnd),
+        map(e => this.route.firstChild),
+        switchMap(route => route?.data ?? of({}))
+      )
+      .subscribe(data => {
+        // if(!data) return;
+        this.redirect = data['authOnly'] ?? false;
+      });
 
     this.usersCollection = db.collection('users');
 
@@ -66,7 +74,7 @@ export class AuthService {
   public async logout($event?: Event) {
     if ($event) $event.preventDefault();
     await this.auth.signOut();
-    await this.router.navigateByUrl('/');
+    if(this.redirect) await this.router.navigateByUrl('/');
   }
 
 }
