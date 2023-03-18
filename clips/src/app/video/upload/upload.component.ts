@@ -12,7 +12,12 @@ export class UploadComponent {
 
   storeFile(event: Event) {
     this.isDragover = false;
-    this.file = (event as DragEvent).dataTransfer?.files.item(0) as File;
+    this.file = (event as DragEvent).dataTransfer?.files.item(0) ?? null;
+
+    if(!this.file || this.file.type !== "video/mp4"){
+      console.log('não é um vídeo')
+      return;
+    }
 
     console.log(event);
   }
