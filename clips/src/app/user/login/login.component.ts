@@ -34,7 +34,7 @@ export class LoginComponent {
     } catch (e) {
       this.alertColor = 'red';
       this.alertMessage = 'Something went wrong!';
-      console.log(e)
+      console.log(e);
     }
 
     this.inSubmission = false;
