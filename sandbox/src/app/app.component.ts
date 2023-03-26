@@ -1,29 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { catchError, debounceTime, delay, EMPTY, interval, map, of, take, tap, timeInterval } from 'rxjs';
+import { catchError, combineLatest, debounceTime, delay, EMPTY, forkJoin, fromEvent, interval, map, of, take, tap, timeInterval, timer, withLatestFrom } from 'rxjs';
+import { ajax } from 'rxjs/ajax';
 
 @Component({
   selector: 'app-root',
   template: `
-  <h1>Valor: </h1>
-  <ng-container *ngIf="total$ | async as total">
-    <h2>{{total}}</h2>
-  </ng-container>
-<br>
-<br>
-<br>
-  <button (click)="troca()"> Mudar</button>
+  <h1> Teste </h1> 
+
+  <button id="btn1">btn1</button> <br />
+  <button id="btn2">btn2</button> <br />
+  <button id="btn3">btn3</button> <br />
   `
 })
 export class AppComponent {
 
-  total$ = interval(250).pipe(
-    map(item => item * Math.round(Math.random() * 100)),
-    take(50),
-  )
+  constructor() {
 
+  }
 
-  troca() {
-    this.total$ = interval(100)
+  ngAfterViewInit() {
+
+    const second$ = interval(3000);
+    interval(1000).pipe(withLatestFrom(second$)).subscribe(console.log)
+
   }
 
 }
