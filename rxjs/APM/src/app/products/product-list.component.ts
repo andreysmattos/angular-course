@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
-import { catchError, EMPTY, filter, map, Observable, of } from 'rxjs';
+import { catchError, combineLatest, EMPTY, filter, map, Observable, of, startWith, Subject, tap } from 'rxjs';
 import { ProductCategory } from '../product-categories/product-category';
 import { ProductCategoryService } from '../product-categories/product-category.service';
 
@@ -14,7 +14,24 @@ import { ProductService } from './product.service';
 export class ProductListComponent {
   pageTitle = 'Product List';
   errorMessage = '';
-  selectedCategoryId = 1;
+
+  private categorySelectedSubject = new Subject<number>();
+
+  categorySelectedAction$ = this.categorySelectedSubject.asObservable();
+
+  products$ = combineLatest([this.productService.products$, this.categorySelectedAction$.pipe(startWith(0))]).pipe(
+    map(([products, selectedCategoryId]) => products.filter(_products => selectedCategoryId ? _products.categoryId === selectedCategoryId : true)),
+    tap(item => {
+      console.log('\\/')
+      console.log(item)
+      console.log('/\\');
+    }),
+    catchError(err => {
+      this.errorMessage = err;
+      return EMPTY;
+    })
+  )
+
 
   categories$ = this.productCategoryService.productCategories$.pipe(
     catchError(err => {
@@ -24,19 +41,7 @@ export class ProductListComponent {
     })
   );
 
-  products$ = this.productService.productWithCategory$.pipe(
-    catchError(err => {
-      console.log(err);
-      this.errorMessage = err;
-      return EMPTY;
-    })
-  );
 
-
-  productsSimpleFilter$ = this.productService.productWithCategory$.pipe(
-    // filter(products => products.filter),
-    map(products => products.filter(product => this.selectedCategoryId ? product.categoryId === this.selectedCategoryId : true))
-  )
 
   constructor(
     private productService: ProductService,
@@ -51,11 +56,6 @@ export class ProductListComponent {
   }
 
   onSelected(categoryId: string): void {
-    // continuar aki
-    // this.productCategoryService.cate
-
-
-
-    this.selectedCategoryId = +categoryId;
+    this.categorySelectedSubject.next(+categoryId);
   }
 }
