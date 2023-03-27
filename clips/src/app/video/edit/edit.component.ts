@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, Input, OnChanges } from '@angular/core';
 import IClip from 'src/app/models/clips.model';
 import { ModalService } from 'src/app/services/modal.service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { ClipService } from 'src/app/services/clip.service';
 
 @Component({
   selector: 'app-edit',
@@ -11,6 +12,12 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 export class EditComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() activeClip: IClip | null = null;
+
+
+  showAlert = false
+  alertColor = "blue"
+  alertMessage = "Please wait! Updating clip.";
+  isSubmission = false
 
   clipId = new FormControl('', {
     validators: [Validators.required],
@@ -27,7 +34,10 @@ export class EditComponent implements OnInit, OnDestroy, OnChanges {
     id: this.clipId
   });
 
-  constructor(public modal: ModalService) {
+  constructor(
+    public modal: ModalService,
+    public clipService: ClipService
+  ) {
 
   }
 
@@ -51,5 +61,16 @@ export class EditComponent implements OnInit, OnDestroy, OnChanges {
 
   ngOnDestroy() {
     this.modal.unregister('editClip');
+  }
+
+
+  async handleSubmit() {
+    console.log('teste')
+    this.isSubmission = true;
+    this.alertMessage = "Please wait! updating clip";
+    this.alertColor = 'blue';
+    this.showAlert = true;
+
+    await this.clipService.updateClip(this.clipId.value, this.title.value);
   }
 }
