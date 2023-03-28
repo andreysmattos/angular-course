@@ -18,7 +18,8 @@ import {
   Subject,
   BehaviorSubject,
   ReplaySubject,
-  startWith
+  startWith,
+  merge
 } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 
@@ -33,11 +34,11 @@ import { ajax } from 'rxjs/ajax';
 export class AppComponent {
 
   constructor() {
-    const source = of(1, 2, 3);
 
-    const example = source.pipe(startWith(-1, 0));
+    const clicks = fromEvent(document!, 'click');
+    const timer = interval(1000);
 
-    example.subscribe(console.log);
+    merge(clicks, timer).subscribe(console.log);
 
   }
 
