@@ -17,7 +17,8 @@ import {
   withLatestFrom,
   Subject,
   BehaviorSubject,
-  ReplaySubject
+  ReplaySubject,
+  startWith
 } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 
@@ -32,28 +33,11 @@ import { ajax } from 'rxjs/ajax';
 export class AppComponent {
 
   constructor() {
-    const subject = new Subject();
-    const behaviorSubject = new BehaviorSubject(-1);
+    const source = of(1, 2, 3);
 
-    subject.next(0); // não vai mostrar
-    behaviorSubject.next(0);
+    const example = source.pipe(startWith(-1, 0));
 
-    subject.subscribe(value => console.log('Subject: ' + value))
-    behaviorSubject.subscribe(value => console.log('Behavior: ' + value))
-
-    subject.next(1);
-    behaviorSubject.next(1);
-
-    subject.next(2);
-    behaviorSubject.next(2);
-
-    const onlyObservable = behaviorSubject.asObservable(); 
-    // onlyObservable não pode usar o .next quando é usado o asObservable
-
-    behaviorSubject.next(123)
-
-
-    onlyObservable.subscribe(console.log)
+    example.subscribe(console.log);
 
   }
 
