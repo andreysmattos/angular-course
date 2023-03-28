@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
-import { catchError, combineLatest, map, Observable, tap, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, map, merge, Observable, scan, shareReplay, Subject, tap, throwError } from 'rxjs';
 
 import { Product } from './product';
 import { ProductCategoryService } from '../product-categories/product-category.service';
@@ -24,7 +24,6 @@ export class ProductService {
       catchError(this.handleError)
     );
 
-
   productWithCategory$ = combineLatest([this.products$, this.productCategoryService.productCategories$])
     .pipe(
       map(([products, categories]) => (products.map((product) => (
@@ -35,7 +34,16 @@ export class ProductService {
         }
       ))
       )),
+      shareReplay(1),
     );
+
+  private productSelectedSubject = new BehaviorSubject(0);
+  productSelectedAction$ = this.productSelectedSubject.asObservable();
+
+  selectedProduct$ = combineLatest([this.productWithCategory$, this.productSelectedAction$]).pipe(
+    map(([products, selectedProductId]) => products.find(product => product.id === selectedProductId)),
+    shareReplay(1),
+  );
 
   private fakeProduct(): Product {
     return {
@@ -49,6 +57,24 @@ export class ProductService {
       quantityInStock: 30
     };
   }
+
+  selectedProductChange(selectedProductId: number): void {
+    this.productSelectedSubject.next(selectedProductId);
+  }
+
+  productInsertedSubject = new Subject();
+  productInsertedAction$ = this.productInsertedSubject.asObservable();
+
+  productsWithAdd$ = merge(this.productWithCategory$, this.productInsertedAction$).pipe(
+    scan((acc, value) => (value instanceof Array ? [...value] : [...acc, value])
+      , [] as Product[])
+  );
+
+
+  addProduct(product?: Product) {
+    this.productInsertedSubject.next(product || this.fakeProduct() )
+  }
+
 
   private handleError(err: HttpErrorResponse): Observable<never> {
     // in a real world app, we may send the server to some remote logging infrastructure

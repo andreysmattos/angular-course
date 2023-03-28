@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 
 import { Subscription } from 'rxjs';
 
@@ -7,24 +7,19 @@ import { ProductService } from '../product.service';
 
 @Component({
   selector: 'pm-product-list',
-  templateUrl: './product-list-alt.component.html'
+  templateUrl: './product-list-alt.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductListAltComponent {
   pageTitle = 'Products';
   errorMessage = '';
-  selectedProductId = 0;
 
-  products: Product[] = [];
-  sub!: Subscription;
-
-  products$ = this.productService.products$;
-
+  products$ = this.productService.productWithCategory$;
+  selectedProduct$ = this.productService.selectedProduct$;
 
   constructor(private productService: ProductService) { }
 
-
-
   onSelected(productId: number): void {
-    console.log('Not yet implemented');
+    this.productService.selectedProductChange(productId)
   }
 }
