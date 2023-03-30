@@ -11,7 +11,8 @@ import {
   interval,
   take,
   fromEvent,
-  switchMap
+  switchMap,
+  map
 } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 @Component({
@@ -21,21 +22,15 @@ import { ajax } from 'rxjs/ajax';
   `
 })
 export class AppComponent {
-
-
-
-
   ngOnInit() {
 
-    const clicks = fromEvent(document, 'click');
-
-    const result = clicks.pipe(
-      switchMap(ev => interval(500).pipe(take(4)))
+    const switched = of(1, 2, 3).pipe(
+      switchMap(x => ajax.getJSON('https://jsonplaceholder.typicode.com/todos/1'))
     );
-    result.subscribe(x => console.log(x));
+
+
+    switched.subscribe(console.log);
+
+
   }
-
-
-
-
 }
