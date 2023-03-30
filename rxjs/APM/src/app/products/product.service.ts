@@ -5,6 +5,7 @@ import { BehaviorSubject, catchError, combineLatest, map, merge, Observable, sca
 
 import { Product } from './product';
 import { ProductCategoryService } from '../product-categories/product-category.service';
+import { SupplierService } from '../suppliers/supplier.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class ProductService {
   constructor(
     private http: HttpClient,
     private productCategoryService: ProductCategoryService,
+    private supplierService: SupplierService,
   ) { }
 
   products$ = this.http.get<Product[]>(this.productsUrl)
@@ -72,7 +74,7 @@ export class ProductService {
 
 
   addProduct(product?: Product) {
-    this.productInsertedSubject.next(product || this.fakeProduct() )
+    this.productInsertedSubject.next(product || this.fakeProduct())
   }
 
 
