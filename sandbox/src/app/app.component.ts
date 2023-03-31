@@ -11,26 +11,34 @@ import {
   interval,
   take,
   fromEvent,
-  switchMap,
-  map
+  switchMap
 } from 'rxjs';
 import { ajax } from 'rxjs/ajax';
 @Component({
   selector: 'app-root',
   template: `
+  <button (click)="update()"> Update </button>
 
   `
 })
 export class AppComponent {
+
+
+
+
   ngOnInit() {
 
-    const switched = of(1, 2, 3).pipe(
-      switchMap(x => ajax.getJSON('https://jsonplaceholder.typicode.com/todos/1'))
+    const clicks = fromEvent(document, 'click');
+
+    const result = clicks.pipe(
+      concatMap(ev => interval(500).pipe(take(4)))
     );
-
-
-    switched.subscribe(console.log);
-
-
+    result.subscribe(x => console.log(x));
   }
+
+
+  update() {
+    console.log('update')
+  }
+
 }
