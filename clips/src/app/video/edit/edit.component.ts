@@ -50,7 +50,7 @@ export class EditComponent implements OnInit, OnDestroy, OnChanges {
     }
 
 
-    this.clipId.setValue(this.activeClip.uid);
+    this.clipId.setValue(this.activeClip.docID);
     this.title.setValue(this.activeClip.fileName)
 
   }
@@ -65,12 +65,25 @@ export class EditComponent implements OnInit, OnDestroy, OnChanges {
 
 
   async handleSubmit() {
-    console.log('teste')
+    console.log('this.clipId.value, this.title.value', this.clipId.value, this.title.value)
     this.isSubmission = true;
     this.alertMessage = "Please wait! updating clip";
     this.alertColor = 'blue';
     this.showAlert = true;
 
-    await this.clipService.updateClip(this.clipId.value, this.title.value);
+    try {
+      await this.clipService.updateClip(this.clipId.value, this.title.value);
+    } catch (error) {
+  
+      this.alertColor = 'red';
+      this.alertMessage = "Something went wrong. Try again later.";
+      console.error(error);
+      return;
+    }
+
+    this.isSubmission = false;
+    this.alertColor = 'green';
+    this.alertMessage = "Success!";
+
   }
 }
