@@ -62,4 +62,12 @@ export class ManageComponent {
 
     console.log('value', value);
   }
+
+  update(event: IClip) {
+    this.clips.forEach((el, i) => {
+      if(el.docID === event.docID){
+        this.clips[i].title = event.title;
+      }
+    })
+  }
 }
